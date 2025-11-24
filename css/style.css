@@ -58,6 +58,11 @@ small {
   font-weight: bold;
 }
 
+.refresh {
+  padding: 10px;
+  font-size: smaller;
+}
+
 footer {
   text-align: center;
   color: rgba(0, 0, 0, 0.8);

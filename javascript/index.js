@@ -1,4 +1,4 @@
-function updateTime() {
+setInterval(function updateTime() {
   // Melbourne
   let melbourneElement = document.querySelector("#melbourne");
   if (melbourneElement) {
@@ -12,19 +12,34 @@ function updateTime() {
     );
   }
 
-  // Lisbon
-  let lisbonElement = document.querySelector("#lisbon");
-  if (lisbonElement) {
-    let lisbonDateElement = lisbonElement.querySelector(".date");
-    let lisbonTimeElement = lisbonElement.querySelector(".time");
-    let lisbonTime = moment().tz("Europe/Lisbon");
+  // Taipei
+  let taipeiElement = document.querySelector("#taipei");
+  if (taipeiElement) {
+    let taipeiDateElement = taipeiElement.querySelector(".date");
+    let taipeiTimeElement = taipeiElement.querySelector(".time");
+    let taipeiTime = moment().tz("Asia/Taipei");
 
-    lisbonDateElement.innerHTML = lisbonTime.format("dddd MMMM Do, YYYY");
-    lisbonTimeElement.innerHTML = lisbonTime.format(
+    taipeiDateElement.innerHTML = taipeiTime.format("dddd MMMM Do, YYYY");
+    taipeiTimeElement.innerHTML = taipeiTime.format(
       "h:mm:ss [<small>]A[</small>]"
     );
   }
-}
+
+  // Dublin
+  let dublinElement = document.querySelector("#dublin");
+  if (dublinElement) {
+    let dublinDateElement = dublinElement.querySelector(".date");
+    let dublinTimeElement = dublinElement.querySelector(".time");
+    let dublinTime = moment().tz("Europe/Dublin");
+
+    dublinDateElement.innerHTML = dublinTime.format("dddd MMMM Do, YYYY");
+    dublinTimeElement.innerHTML = dublinTime.format(
+      "h:mm:ss [<small>]A[</small>]"
+    );
+  }
+}, 1);
+
+let intervalId;
 
 function updateCity(event) {
   let cityTimeZone = event.target.value;
@@ -32,9 +47,16 @@ function updateCity(event) {
     cityTimeZone = moment.tz.guess();
   }
   let cityName = cityTimeZone.replace("_", " ").split("/")[1];
-  let cityTime = moment().tz(cityTimeZone);
-  let citiesElement = document.querySelector("#cities");
-  citiesElement.innerHTML = `
+
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+
+  function refreshSearchedTime() {
+    let cityTime = moment().tz(cityTimeZone);
+
+    let citiesElement = document.querySelector("#cities");
+    citiesElement.innerHTML = `
           <div class="city">
           <div>
             <h2>${cityName}</h2>
@@ -42,13 +64,14 @@ function updateCity(event) {
           </div>
           <div class="time">${cityTime.format(
             "h:mm:ss"
-          )} <small>${cityTime.format("A")}</small></div>
+          )} <small>${cityTime.format("A")}</small></div>          
         </div>
+        <div class="refresh"><a href="\">Refresh</a></div>
   `;
+  }
+  refreshSearchedTime();
+  intervalId = setInterval(refreshSearchedTime, 1000);
 }
-
-updateTime();
-setInterval(updateTime, 1000);
 
 let citiesSelectElement = document.querySelector("#city");
 citiesSelectElement.addEventListener("change", updateCity);
